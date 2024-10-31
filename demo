@@ -1,0 +1,46 @@
+<div class="flex justify-between items-center mb-4">
+            <div class="text-gray-600">
+                <?php
+                $total_employees = count($employees);
+                $showing_employees = min($total_employees, 10); // Assuming we're showing a maximum of 10 employees per page
+                echo "Showing {$showing_employees} out of {$total_employees} employees";
+                ?>
+            </div>
+            <div class="text-gray-600">
+                Total Employees: <?php echo $total_employees; ?>
+            </div>
+        </div>
+
+        echo "<pre>";
+        print_r($_POST);
+        echo "</pre>";
+
+
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'ems_employee';
+
+        $name = sanitize_text_field($_POST['employee_name']);
+        $email = sanitize_email($_POST['employee_email']);
+        $phone = sanitize_text_field($_POST['employee_phone']);
+        $position = sanitize_text_field($_POST['employee_position']);
+        $gender = sanitize_text_field($_POST['employee_gender']);
+        $start_date = sanitize_text_field($_POST['employee_start_date']);
+
+        $data = array(
+            'name' => $name,
+            'email' => $email,
+            'phoneNo' => $phone,
+            'position' => $position,
+            'gender' => $gender,
+            'startDate' => $start_date
+        );
+         $wpdb->insert($table_name, $data);
+
+         if ($wpdb->insert_id) {
+            $success_message = 'Employee added successfully';
+            $status = 'success';
+         } else {
+            $error_message = 'Failed to add employee';
+            $status = 'error';
+         }

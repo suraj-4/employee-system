@@ -1,0 +1,5 @@
+#ems_add_Employee_Form .error {
+    color: red;
+    font-size: 14px;
+    font-weight: 600;
+}
