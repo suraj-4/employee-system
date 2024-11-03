@@ -21,7 +21,7 @@ function custom_plugin_menu(){
     $menu_title = 'Employee System';
     $capability = 'manage_options';
     $menu_slug = 'employee-system';
-    $callback = 'ems_crud_operation';
+    $callback = 'list_employee';
     $icon_url = 'dashicons-admin-users';
     $position = 23;
 
@@ -38,7 +38,7 @@ function custom_plugin_menu(){
 }
 
 //function for listing employee
-function ems_crud_operation(){
+function list_employee(){
     include_once(EMS_PLUGIN_PATH . 'pages/list-employee.php');
 }
 
