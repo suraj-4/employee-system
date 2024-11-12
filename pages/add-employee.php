@@ -41,6 +41,7 @@
 
         // Validate the file type (optional)
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+        $upload_path = '';
         if (in_array($image['type'], $allowed_types)) {
             // Set up the upload directory
             $upload_dir = wp_upload_dir();
@@ -88,26 +89,37 @@
 ?>
 
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">
-        <?php if ($action == 'edit' || $action == 'view') : ?>
-            <?php if ($action == 'edit') : ?> 
-                Edit Employee 
-            <?php endif; ?>
-            <?php if ($action == 'view') : ?> 
-                View Employee
-            <?php endif; ?>
-        <?php else: ?>
-            Add Employee
-        <?php endif; ?>
-    </h1>
+    <div class="flex justify-between items-center mb-6">
+        <div class="w-1/2">
+            <h1 class="text-3xl font-bold text-gray-800">
+                <?php if ($action == 'edit' || $action == 'view') : ?>
+                    <?php if ($action == 'edit') : ?> 
+                        Edit Employee 
+                    <?php endif; ?>
+                    <?php if ($action == 'view') : ?> 
+                        View Employee
+                    <?php endif; ?>
+                <?php else: ?>
+                    Add Employee
+                <?php endif; ?>
+            </h1>
+        </div>
+        <div class="w-1/2 text-right">
+            <a href="admin.php?page=employee-system" class="bg-blue-500 hover:bg-blue-600 hover:text-white text-white font-bold py-2 px-4 rounded inline-flex items-center transition duration-300 ease-in-out">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Employee List
+            </a>
+        </div>
+    </div>
     <?php if ($status == 'success') : ?>
         <div class="message bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
             <strong class="font-bold">Success!</strong> <?php echo $success_message; ?>
         </div>
     <?php endif; ?>
     <form method="post" 
-    action="<?php if ($action == 'edit') : ?>admin.php?page=add-employee&action=edit&id=<?php echo $employee_id; ?>
-    <?php else : ?>admin.php?page=add-employee<?php endif; ?>"
+    action="<?php if ($action == 'edit') : ?>admin.php?page=add-employee&action=edit&id=<?php echo $employee_id; ?><?php else : ?>admin.php?page=add-employee<?php endif; ?>"
      id="ems_add_Employee_Form" class="bg-gradient-to-r from-blue-100 to-purple-100 shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4" enctype="multipart/form-data">
         <div class="flex flex-wrap -mx-3 mb-6">
             <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
@@ -184,9 +196,15 @@
                             </label>
                         </div>
                         <div class="w-1/2 px-3">
-                            <div id="imagePreview" class="hidden imagePreview">
-                                <img id="preview" src="#" alt="Preview" class="rounded-lg shadow-lg object-cover"/>
-                            </div>
+                            <?php if (($action == 'view' || $action == 'edit') && !empty($employee['image'])) : ?>
+                                <div id="imageView" class="imageView">
+                                    <img src="<?php echo $employee['image']; ?>" alt="Current Employee Image" class="rounded-lg shadow-lg object-cover mb-4"/>
+                                </div>
+                            <?php else: ?>
+                                <div id="imagePreview" class="hidden imagePreview">
+                                    <img id="preview" src="#" alt="Preview Employee Image" class="rounded-lg shadow-lg object-cover"/>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
