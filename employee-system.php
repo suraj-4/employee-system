@@ -1,15 +1,44 @@
 <?php
-/*
- * Plugin Name: Employee Management System
- * Description: A simple CRUD operation of Employee Management System for learning purpose.
- * Version: 1.0
- * Author: Surya Dev
- * Author URI:  https://github.com/suraj-4
- * Text Domain: employee-system
-*/
+/**
+ * The plugin bootstrap file
+ *
+ * This file is read by WordPress to generate the plugin information in the plugin
+ * admin area. This file also includes all of the dependencies used by the plugin,
+ * registers the activation and deactivation functions, and defines a function
+ * that starts the plugin.
+ *
+ * @link              https://https://github.com/suraj-4
+ * @since             1.0.0
+ * @package           Employee_Management_System
+ *
+ * @wordpress-plugin
+ * Plugin Name:       Employee Management System
+ * Plugin URI:        https://github.com/suraj-4/employee-system
+ * Description:       A simple CRUD operation of Employee Management System for learning purpose.
+ * Version:           1.0.0
+ * Author:            Surya Dev
+ * Author URI:        https://github.com/suraj-4/
+ * License:           GPL-2.0+
+ * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * Text Domain:       employee-management-system
+ * Domain Path:       /languages
+ */
+
+ // If this file is called directly, abort.
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
+/**
+ * Currently plugin version.
+ * Start at version 1.0.0 and use SemVer - https://semver.org
+ * Rename this for your plugin and update it as you release new versions.
+ */
+define( 'EMPLOYEE_MANAGEMENT_SYSTEM_VERSION', '1.0.0' );
 
 define("EMS_PLUGIN_PATH", plugin_dir_path(__FILE__));
 define("EMS_PLUGIN_URL", plugin_dir_url(__FILE__));
+
 
 //calling action hook
 add_action('admin_menu', 'custom_plugin_menu');
@@ -57,8 +86,9 @@ function ems_plugin_activation(){
     global $wpdb;   
     $table_prefix = $wpdb->prefix;
     $sql = "
-    CREATE TABLE {$table_prefix}emp_system (
+    CREATE TABLE `{$table_prefix}emp_system` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
+    `image` varchar(100) DEFAULT NULL,
     `name` varchar(120) DEFAULT NULL,
     `email` varchar(80) DEFAULT NULL,
     `phoneNo` varchar(50) DEFAULT NULL,
@@ -66,11 +96,21 @@ function ems_plugin_activation(){
     `gender` enum('male','female','other') DEFAULT NULL,
     `startDate` date DEFAULT NULL,
     PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
     ";
 
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     dbDelta($sql);
+
+    //Create a WordPress page
+    $pageData = [
+        "post_title"    => "Employee Management System",
+        "post_status"   => "publish",
+        "post_type"     => "page",
+        "post_name"     => "employee-management-system",
+        "post_content" => "[employee_data]"
+    ];
+    wp_insert_post($pageData);
 }
 
 // Deactivation hook
@@ -81,6 +121,14 @@ function ems_plugin_deactivation(){
     $table_prefix = $wpdb->prefix;
     $sql = "DROP TABLE IF EXISTS {$table_prefix}emp_system";
     $wpdb->query($sql);
+
+    //Delete a WordPress page
+    $pageSlug = "employee-management-system";
+    $pageInfo = get_page_by_path($pageSlug);
+    if(!empty($pageInfo)){
+        $pageID = $pageInfo->ID;
+        wp_delete_post($pageID, true);
+    }
 } 
 
 
@@ -96,4 +144,8 @@ function ems_plugin_enqueue_scripts(){
     wp_enqueue_script('ems-jquery-validate', EMS_PLUGIN_URL . 'assets/js/jquery.validate.min.js', array('jquery'), '1.0.0', true);
     wp_enqueue_script('ems-custom-js', EMS_PLUGIN_URL . 'assets/js/custom.js', array('jquery'), '1.0.0', true);
 }
+
+include_once(EMS_PLUGIN_PATH . 'employee-card.php');
+
+
 
